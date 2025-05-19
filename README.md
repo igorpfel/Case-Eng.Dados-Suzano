@@ -1,4 +1,4 @@
---Construção de um fluxo de engenharia de dados — Indicadores Econômicos (Suzano Case)
+Construção de um fluxo de engenharia de dados — Indicadores Econômicos (Suzano Case)
 
 Este projeto entrega um pipeline de dados automatizado para ingestão e armazenamento dos indicadores econômicos USD/CNY e Chinese PMI que são encontrados nos link's : 
 
@@ -69,30 +69,6 @@ investing_pipeline/
 - Valida datas, converte formatos numéricos e cria as tabelas se não existirem.
 
 
-* Execução Local
-
-Instale o Docker Desktop e o Python 3.10+
-
-*1. Clonar o repositório e acessar a pasta
-
-git clone <repo-url>
-cd investing_pipeline
-
- 2. Subir PostgreSQL + Airflow com Docker Compose
-
- --bash
-docker-compose up -d
-
-
- 3. Executar o pipeline (ETL)
-
---bash
-docker build -t investing-pipeline .
-docker run --rm -v "%cd%/fonte:/app/fonte" --network=projeto_default investing-pipeline
-
-
-
-
 **Banco de Dados PostgreSQL
 
 - Subido com o Docker Compose localmente.
@@ -100,28 +76,61 @@ docker run --rm -v "%cd%/fonte:/app/fonte" --network=projeto_default investing-p
 
 *Estrutura das Tabelas
 
---Tabela `usd_cny_exchange`
+-Tabela `usd_cny_exchange`
 
-Campo  |	Tipo
+Campo    |	  Tipo
 date         DATE
-close	FLOAT
-open	FLOAT
-high	FLOAT
-low	FLOAT
-volume	TEXT
+close	       FLOAT
+open	        FLOAT
+high	        FLOAT
+low	         FLOAT
+volume	      TEXT
 
 -- Tabela `chinese_pmi_index`
 
  Campo   | Tipo   
 
- date               DATE   
- actual_state  FLOAT  
- forecast         FLOAT  
- close              FLOAT  
+ date              DATE   
+ actual_state      FLOAT  
+ forecast          FLOAT  
+ close             FLOAT  
 
 
 
-Orquestração com Airflow
+
+Como Executar o Projeto Localmente
+
+### 1. Clone o repositório
+
+
+git clone https://https://github.com/igorpfel/Case-Eng.Dados-Suzano.git
+cd investing_pipeline
+
+
+
+1.1 - Banco de Dados Local 
+Arquivo "docker-compose.yml"
+
+
+2. Suba o ambiente com Docker Compose
+
+
+docker-compose up -d
+
+
+### 3. Execute o Script de ETL manualmente (scripts/load_data.py)
+
+
+3.3 - Execução do ETL-  Arquivo Dockerfile
+
+docker build -t investing-pipeline .
+docker run --rm -v "$PWD/fonte:/app/fonte" --network=projeto_default investing-pipeline
+
+
+Resultado  : Ira ler os arquivos CSV na fonte realizar o tratamento e inserir os dados no banco de daodos com duas tabelas: `usd_cny_exchange` e `chinese_pmi_index`.
+
+
+4.4 - Orquestração com Airflow (DAG)
 
 Uma DAG que se chama `investing_pipeline.py` foi criada na pasta `dags/`, e foi agendada agendada para rodar diariamente( confome o case solicitou) e executar o script `load_data.py`.
 
@@ -133,29 +142,13 @@ Usuário: airflow
 Senha: airflow
 
 
-Como Executar o Projeto Localmente
+## Arquivo dags/investing_pipeline.py
 
-### 1. Clone o repositório
+--rode para ativar a orquestração
 
-```bash
-git clone https://https://github.com/igorpfel/Case-Eng.Dados-Suzano.git
-cd investing_pipeline
-```
+docker-compose down
+docker-compose up -d 
 
-### 2. Suba o ambiente com Docker Compose
-
-```bash
-docker-compose up -d
-```
-
-### 3. Execute o ETL manualmente (modo container)
-
-```bash
-docker build -t investing-pipeline .
-docker run --rm -v "$PWD/fonte:/app/fonte" --network=projeto_default investing-pipeline
-
-
-Resultado  : Ira ler os arquivos CSV na fonte realizar o tratamento e inserir os dados no banco de daodos com duas tabelas: `usd_cny_exchange` e `chinese_pmi_index`.
 
 
 *** Bônus: Provisionamento na Nuvem com Terraform + GCP
