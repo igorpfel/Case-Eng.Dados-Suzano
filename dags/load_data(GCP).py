@@ -2,14 +2,14 @@ import pandas as pd
 from sqlalchemy import create_engine, text
 from datetime import datetime
 
-# Função para converter valores com vírgula para ponto e lidar com vazios
+
 def convert_to_float(x):
     try:
         return float(str(x).replace('.', '').replace(',', '.'))
     except:
         return None
 
-# Conexão com o banco no GCP (via socket Cloud SQL)
+
 engine = create_engine("postgresql+psycopg2://postgres:1234@db:5432/investing")
 
 # 1. USD/CNY
