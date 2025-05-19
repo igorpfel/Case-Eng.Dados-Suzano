@@ -28,21 +28,22 @@ Terraform + GCP para infraestrutura como código.
 
 
 investing_pipeline/
-	fonte/             
-	 scripts/
-	   └── load_data.py          (ETL)
-	 dags/
-   	   └──  investing_pipeline.py (AIRFLOW)
-	Dockerfile
-	 docker-compose.yml
-	requirements.txt
-	 terraform/                ( GCP)
-	└──main.tf
-	└──cloud_run.tf
-	└──composer.tf
-	diagrama.png            
-	README.md
-
+├── fonte/                    # CSVs extraídos manualmente
+│   ├── USD_cny.csv
+│   └── chinese_pmi_data.csv
+├── scripts/
+│   └── load_data.py          # Script principal de ETL
+├── dags/
+│   └── investing_pipeline.py # DAG para execução automática
+├── Dockerfile                # Container do ETL
+├── docker-compose.yml        # Orquestra Airflow + PostgreSQL
+├── requirements.txt          # Bibliotecas necessárias
+├── terraform/                # Código IaC para GCP
+│   ├── main.tf
+│   ├── cloud_run.tf
+│   └── composer.tf
+├── diagrama.png              # Diagrama da arquitetura
+└── README.md
 
 * Fontes de Dados
 
@@ -61,8 +62,16 @@ investing_pipeline/
 -Google Cloud Platform (GCP)
 
 
+** Desenvolvimento do ETL (`scripts/load_data.py`)
+
+- Script em Python que lê os arquivos CSV, trata os dados e insere no PostgreSQL.
+- Utilizei o  pandas para transformação e sqlalchemy para conexão ao banco.
+- Valida datas, converte formatos numéricos e cria as tabelas se não existirem.
+
 
 * Execução Local
+
+Instale o Docker Desktop e o Python 3.10+
 
 *1. Clonar o repositório e acessar a pasta
 
@@ -82,9 +91,12 @@ docker build -t investing-pipeline .
 docker run --rm -v "%cd%/fonte:/app/fonte" --network=projeto_default investing-pipeline
 
 
-Resultado  : Ira ler os arquivos CSV na fonte realizar o tratamento e inserir os dados no banco de daodos com duas tabelas: `usd_cny_exchange` e `chinese_pmi_index`.
 
 
+**Banco de Dados PostgreSQL
+
+- Subido com o Docker Compose localmente.
+- Criação automática de duas tabelas:
 
 *Estrutura das Tabelas
 
@@ -119,6 +131,32 @@ Uma DAG que se chama `investing_pipeline.py` foi criada na pasta `dags/`, e foi 
 http://localhost:8080
 Usuário: airflow
 Senha: airflow
+
+
+Como Executar o Projeto Localmente
+
+### 1. Clone o repositório
+
+```bash
+git clone https://https://github.com/igorpfel/Case-Eng.Dados-Suzano.git
+cd investing_pipeline
+```
+
+### 2. Suba o ambiente com Docker Compose
+
+```bash
+docker-compose up -d
+```
+
+### 3. Execute o ETL manualmente (modo container)
+
+```bash
+docker build -t investing-pipeline .
+docker run --rm -v "$PWD/fonte:/app/fonte" --network=projeto_default investing-pipeline
+
+
+Resultado  : Ira ler os arquivos CSV na fonte realizar o tratamento e inserir os dados no banco de daodos com duas tabelas: `usd_cny_exchange` e `chinese_pmi_index`.
+
 
 *** Bônus: Provisionamento na Nuvem com Terraform + GCP
 
