@@ -26,7 +26,7 @@ services:
       AIRFLOW__CORE__LOAD_EXAMPLES: 'False'
     volumes:
       - ./dags:/opt/airflow/dags
-      - ./fonte:/opt/airflow/fonte  # 👈 Adicionado este volume
+      - ./fonte:/opt/airflow/fonte  
     ports:
       - "8080:8080"
     command: >
