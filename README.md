@@ -106,7 +106,7 @@ Como Executar o Projeto Localmente
 git clone https://https://github.com/igorpfel/Case-Eng.Dados-Suzano.git
 cd investing_pipeline
 
-
+OBS : Renomear o arquio "load_data -(local).py" para >>  "load_data.py" para rodar localmente
 
 1.1 - Banco de Dados Local 
 Arquivo "docker-compose.yml"
